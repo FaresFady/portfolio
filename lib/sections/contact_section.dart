@@ -97,11 +97,13 @@ class _ContactSectionState extends State<ContactSection> {
         },
         body: jsonEncode({
           'access_key': 'c3493259-1edf-4bc2-b2a2-c6515f40f0ce',
-          'name': name.isNotEmpty ? name : 'Portfolio Visitor',
-          'email': email,
-          'subject': '[$_selectedCategory] Portfolio Message from ${name.isNotEmpty ? name : email}',
-          'message': message,
-          'from_name': name.isNotEmpty ? '$name via Portfolio' : 'Portfolio Visitor',
+          'subject': '[$_selectedCategory] Message from ${name.isNotEmpty ? name : email}',
+          'from_name': name.isNotEmpty ? '$name (via Portfolio)' : 'Portfolio Lead ($email)',
+          'replyto': email,
+          'Topic': _selectedCategory,
+          'Sender Name': name.isNotEmpty ? name : 'Not specified',
+          'Sender Email': email,
+          'Message': message,
         }),
       );
 
