@@ -42709,21 +42709,21 @@ r=s.f
 r.X$=q
 r.M$=0
 s.aF()},
-x7(){var s=0,r=A.O(t.H),q,p=2,o=[],n=this,m,l,k,j,i,h,g,f,e,d,c,b,a,a0,a1,a2,a3,a4
-var $async$x7=A.P(function(a5,a6){if(a5===1){o.push(a6)
-s=p}for(;;)switch(s){case 0:a1=B.c.hC(n.d.a.a)
-a2=B.c.hC(n.e.a.a)
-a3=B.c.hC(n.f.a.a)
-if(J.ck(a2)===0){h=n.c.ar(t.Pu).f
+x7(){var s=0,r=A.O(t.H),q,p=2,o=[],n=this,m,l,k,j,i,h,g,f,e,d,c,b,a,a0,a1,a2,a3,a4,a5
+var $async$x7=A.P(function(a6,a7){if(a6===1){o.push(a7)
+s=p}for(;;)switch(s){case 0:a2=B.c.hC(n.d.a.a)
+a3=B.c.hC(n.e.a.a)
+a4=B.c.hC(n.f.a.a)
+if(J.ck(a3)===0){h=n.c.ar(t.Pu).f
 g=A.b8("Please enter your email so I can reply to you.",null,null,null,A.cS(B.dt,14,B.l,1.6),null,null)
 h.vF(A.N2(null,null,null,$.bk().a===B.m?B.z:B.A,null,B.a_,null,g,null,B.hc,null,null,null,null,null,null,null,null,null,null))
 s=1
 break}f=A.cv("^[\\w\\.-]+@[\\w\\.-]+\\.\\w+$",!1)
-if(!f.b.test(a2)){h=n.c.ar(t.Pu).f
+if(!f.b.test(a3)){h=n.c.ar(t.Pu).f
 g=A.b8("Please enter a valid email address (e.g. name@example.com).",null,null,null,A.cS(B.dt,14,B.l,1.6),null,null)
 h.vF(A.N2(null,null,null,$.bk().a===B.m?B.z:B.A,null,B.a_,null,g,null,B.hc,null,null,null,null,null,null,null,null,null,null))
 s=1
-break}if(J.ck(a3)===0){h=n.c.ar(t.Pu).f
+break}if(J.ck(a4)===0){h=n.c.ar(t.Pu).f
 g=A.b8("Please enter a message before sending.",null,null,null,A.cS(B.dt,14,B.l,1.6),null,null)
 h.vF(A.N2(null,null,null,$.bk().a===B.m?B.z:B.A,null,B.a_,null,g,null,B.hc,null,null,null,null,null,null,null,null,null,null))
 s=1
@@ -42732,13 +42732,14 @@ p=4
 h=A.fi("https://api.web3forms.com/submit",0,null)
 g=t.N
 e=A.aq(["Content-Type","application/json","Accept","application/json"],g,g)
-d=J.ck(a1)!==0?a1:"Portfolio Visitor"
-c=n.r
-b=A.j(J.ck(a1)!==0?a1:a2)
-a=J.ck(a1)!==0?A.j(a1)+" via Portfolio":"Portfolio Visitor"
+d=n.r
+c=A.j(J.ck(a2)!==0?a2:a3)
+b=J.ck(a2)!==0?A.j(a2)+" (via Portfolio)":"Portfolio Lead ("+A.j(a3)+")"
+a=n.r
+a0=J.ck(a2)!==0?a2:"Not specified"
 s=7
-return A.K(A.aRh(h,B.cN.Uo(A.aq(["access_key","c3493259-1edf-4bc2-b2a2-c6515f40f0ce","name",d,"email",a2,"subject","["+c+"] Portfolio Message from "+b,"message",a3,"from_name",a],g,g),null),e),$async$x7)
-case 7:m=a6
+return A.K(A.aRh(h,B.cN.Uo(A.aq(["access_key","c3493259-1edf-4bc2-b2a2-c6515f40f0ce","subject","["+d+"] Message from "+c,"from_name",b,"replyto",a3,"Topic",a,"Sender Name",a0,"Sender Email",a3,"Message",a4],g,g),null),e),$async$x7)
+case 7:m=a7
 e=m
 l=t.a.a(B.cN.TS(A.aQl(A.aOb(e.e)).fn(e.w),null))
 if(m.b===200&&J.d(J.k8(l,"success"),!0)){if(n.c!=null)n.ab(new A.ahA(n))}else{h=J.k8(l,"message")
@@ -42747,14 +42748,14 @@ throw A.h(h)}p=2
 s=6
 break
 case 4:p=3
-a4=o.pop()
+a5=o.pop()
 if(n.c!=null){n.ab(new A.ahB(n))
 h=n.c.ar(t.Pu).f
 g=A.b8("Could not send automatically. Opening email client as backup...",null,null,null,A.cS(B.dt,14,B.l,1.6),null,null)
-h.vF(A.N2(null,null,null,$.bk().a===B.m?B.z:B.A,null,B.a_,null,g,null,B.hc,null,null,null,null,null,null,null,null,null,null))}k=J.ck(a1)!==0?A.j(a1)+" ("+A.j(a2)+")":a2
+h.vF(A.N2(null,null,null,$.bk().a===B.m?B.z:B.A,null,B.a_,null,g,null,B.hc,null,null,null,null,null,null,null,null,null,null))}k=J.ck(a2)!==0?A.j(a2)+" ("+A.j(a3)+")":a3
 j=A.no(2,"["+n.r+"] Portfolio Message from "+A.j(k),B.Z,!1)
 h=n.r
-i=A.no(2,"Category: "+h+"\nName: "+A.j(J.ck(a1)!==0?a1:"Not provided")+"\nReply-To: "+A.j(a2)+"\n\nMessage:\n"+A.j(a3)+"\n\n---\nSent from Fares Elhabashy Portfolio",B.Z,!1)
+i=A.no(2,"Category: "+h+"\nName: "+A.j(J.ck(a2)!==0?a2:"Not provided")+"\nReply-To: "+A.j(a3)+"\n\nMessage:\n"+A.j(a4)+"\n\n---\nSent from Fares Elhabashy Portfolio",B.Z,!1)
 A.e_("mailto:fareselhabashy7@gmail.com?subject="+A.j(j)+"&body="+A.j(i))
 s=6
 break
