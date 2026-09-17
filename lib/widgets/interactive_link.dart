@@ -1,17 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../theme/app_theme.dart';
+import '../utils/download_helper.dart';
 
 Future<void> openUrl(String url) async {
-  final uri = Uri.parse(url);
+  Uri uri = Uri.parse(url);
+  if (!uri.hasScheme) {
+    uri = Uri.base.resolve(url);
+  }
   if (await canLaunchUrl(uri)) {
     await launchUrl(uri, mode: LaunchMode.externalApplication);
+  } else {
+    try {
+      await launchUrl(uri);
+    } catch (_) {}
   }
 }
 
 Future<void> downloadCv() async {
-  // On web, opening the relative path directly downloads/opens the PDF
-  await openUrl('Fares_Elhabashy_CV.pdf');
+  const fileName = 'Fares_Elhabashy_CV.pdf';
+  // Load the PDF bytes from the Flutter asset bundle (works in dev AND production).
+  // Then downloadPdfBytes() encodes them as a base64 data URL and triggers a
+  // hidden-anchor download -- no external server request needed at all.
+  try {
+    final byteData = await rootBundle.load('assets/cv/$fileName');
+    final bytes = byteData.buffer.asUint8List(
+      byteData.offsetInBytes,
+      byteData.lengthInBytes,
+    );
+    downloadPdf(bytes, fileName);
+  } catch (_) {
+    // Fallback: open URL in new tab
+    await openUrl(fileName);
+  }
 }
 
 class PrimaryButton extends StatefulWidget {

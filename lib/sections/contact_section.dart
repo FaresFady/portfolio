@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import '../theme/app_theme.dart';
 import '../widgets/content_wrapper.dart';
 import '../widgets/interactive_link.dart';
@@ -20,6 +22,7 @@ class _ContactSectionState extends State<ContactSection> {
 
   String _selectedCategory = '💼 Job Opportunity';
   bool _isSubmitted = false;
+  bool _isSending = false;
 
   final List<String> _categories = [
     '💼 Job Opportunity',
@@ -35,10 +38,39 @@ class _ContactSectionState extends State<ContactSection> {
     super.dispose();
   }
 
-  void _sendMessage() {
+  Future<void> _sendMessage() async {
     final name = _nameController.text.trim();
-    final contact = _contactController.text.trim();
+    final email = _contactController.text.trim();
     final message = _messageController.text.trim();
+
+    if (email.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Please enter your email so I can reply to you.',
+            style: AppTypography.body(fontSize: 14, color: AppColors.primaryBtnText),
+          ),
+          backgroundColor: AppColors.accent,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+
+    final emailRegex = RegExp(r'^[\w\.-]+@[\w\.-]+\.\w+$');
+    if (!emailRegex.hasMatch(email)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Please enter a valid email address (e.g. name@example.com).',
+            style: AppTypography.body(fontSize: 14, color: AppColors.primaryBtnText),
+          ),
+          backgroundColor: AppColors.accent,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
 
     if (message.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -54,37 +86,79 @@ class _ContactSectionState extends State<ContactSection> {
       return;
     }
 
-    // Format pre-filled mailto
-    final subject = Uri.encodeComponent('[$_selectedCategory] Portfolio Message from ${name.isNotEmpty ? name : 'Visitor'}');
-    final body = Uri.encodeComponent(
-      'Category: $_selectedCategory\n'
-      'Name: ${name.isNotEmpty ? name : 'Anonymous'}\n'
-      'Contact: ${contact.isNotEmpty ? contact : 'Not provided'}\n\n'
-      'Message:\n$message\n\n---\nSent from Fares Elhabashy Portfolio',
-    );
+    setState(() => _isSending = true);
 
-    final mailtoUrl = 'mailto:fareselhabashy7@gmail.com?subject=$subject&body=$body';
-    openUrl(mailtoUrl);
+    try {
+      final response = await http.post(
+        Uri.parse('https://api.web3forms.com/submit'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode({
+          'access_key': 'c3493259-1edf-4bc2-b2a2-c6515f40f0ce',
+          'name': name.isNotEmpty ? name : 'Portfolio Visitor',
+          'email': email,
+          'subject': '[$_selectedCategory] Portfolio Message from ${name.isNotEmpty ? name : email}',
+          'message': message,
+          'from_name': name.isNotEmpty ? '$name via Portfolio' : 'Portfolio Visitor',
+        }),
+      );
 
-    setState(() {
-      _isSubmitted = true;
-    });
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      if (response.statusCode == 200 && data['success'] == true) {
+        if (mounted) {
+          setState(() {
+            _isSending = false;
+            _isSubmitted = true;
+          });
+        }
+      } else {
+        throw Exception(data['message'] ?? 'Submission failed');
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() => _isSending = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Could not send automatically. Opening email client as backup...',
+              style: AppTypography.body(fontSize: 14, color: AppColors.primaryBtnText),
+            ),
+            backgroundColor: AppColors.accent,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+      // Backup fallback to mailto
+      final senderDisplay = name.isNotEmpty ? '$name ($email)' : email;
+      final subject = Uri.encodeComponent('[$_selectedCategory] Portfolio Message from $senderDisplay');
+      final body = Uri.encodeComponent(
+        'Category: $_selectedCategory\n'
+        'Name: ${name.isNotEmpty ? name : 'Not provided'}\n'
+        'Reply-To: $email\n\n'
+        'Message:\n$message\n\n---\nSent from Fares Elhabashy Portfolio',
+      );
+      openUrl('mailto:fareselhabashy7@gmail.com?subject=$subject&body=$body');
+    }
   }
 
   void _sendWhatsApp() {
     final name = _nameController.text.trim();
+    final email = _contactController.text.trim();
     final message = _messageController.text.trim();
     
+    final senderDisplay = name.isNotEmpty ? (email.isNotEmpty ? '$name ($email)' : name) : (email.isNotEmpty ? email : 'Visitor');
     String text;
     if (message.isEmpty) {
       text = Uri.encodeComponent(
-        'Hi Fares! I saw your Flutter portfolio and would like to connect.',
+        'Hi Fares! I saw your Flutter portfolio and would like to connect.\n👤 From: $senderDisplay',
       );
     } else {
       text = Uri.encodeComponent(
         'Hi Fares! I visited your Flutter portfolio.\n\n'
         '📌 Topic: $_selectedCategory\n'
-        '👤 From: ${name.isNotEmpty ? name : "Visitor"}\n'
+        '👤 From: $senderDisplay\n'
         '💬 Message: $message',
       );
     }
@@ -298,7 +372,7 @@ class _ContactSectionState extends State<ContactSection> {
         ),
         const SizedBox(height: 12),
         Text(
-          'Your email client has been opened with your pre-filled message. You can also send it directly to Fares on WhatsApp.',
+          'Your message has been sent directly to Fares\'s Gmail! He will get back to you as soon as possible. You can also connect directly on WhatsApp.',
           style: AppTypography.body(fontSize: 14.5, color: AppColors.muted),
           textAlign: TextAlign.center,
         ),
@@ -407,11 +481,11 @@ class _ContactSectionState extends State<ContactSection> {
         ),
         const SizedBox(height: 14),
 
-        // Email / Phone Field
+        // Email Field
         _buildTextField(
           controller: _contactController,
-          label: 'Your Email or Phone (optional)',
-          hint: 'e.g. sarah@example.com or +20...',
+          label: 'Your Email *',
+          hint: 'e.g. sarah@example.com',
           icon: Icons.alternate_email,
         ),
         const SizedBox(height: 14),
@@ -432,8 +506,8 @@ class _ContactSectionState extends State<ContactSection> {
           runSpacing: 10,
           children: [
             PrimaryButton(
-              text: 'Send Message ✉️',
-              onTap: _sendMessage,
+              text: _isSending ? 'Sending... ⏳' : 'Send Message ✉️',
+              onTap: _isSending ? () {} : _sendMessage,
             ),
             GhostButton(
               text: 'Chat on WhatsApp 💬',

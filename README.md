@@ -12,9 +12,10 @@ A modern, responsive, and performance-optimized personal portfolio web applicati
 - 📱 **Fully Responsive:** Fluid, adaptive layout tailored for everything from mobile phones (390px+) to ultra-wide desktop monitors with zero horizontal overflow.
 - 💫 **Graceful Scroll Animations:** In-viewport element reveals powered by custom deceleration cubic curves (`Curves.easeOutCubic`) with frame-throttled scroll listeners for steady 60/120 FPS performance.
 - 🟢 **Live Availability Beacon:** An animated radar pulse status indicator showing active availability for mobile developer roles.
-- 📄 **Direct Resume Download:** One-click CV download with auto-fallback to view in a dedicated browser tab.
-- 💬 **Interactive Contact & WhatsApp:** Instant direct messaging with pre-formatted email templates and WhatsApp chat routing.
-- ⚡ **Production-Ready CI/CD:** Fully automated GitHub Actions workflow that builds and deploys the release web bundle on every push.
+- 📄 **Direct Resume Download:** One-click instant CV PDF download with base64 data fallback and mobile-friendly viewing.
+- 💬 **Interactive Contact & WhatsApp:** Direct background messaging to Gmail via Web3Forms API with form validation, plus WhatsApp instant chat routing.
+- ⚡ **Mobile Performance Optimized:** Image compression (77% size reduction), parallel Google Fonts preloading, and an instant branded splash loader for near-instant perceived load times.
+- 🚀 **Production-Ready CI/CD:** Fully automated GitHub Actions workflow that builds and deploys the release web bundle on every push.
 
 ---
 

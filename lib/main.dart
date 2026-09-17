@@ -51,11 +51,24 @@ class _PortfolioHomePageState extends State<PortfolioHomePage> {
 
   final ScrollController _scrollController = ScrollController();
   bool _showBackToTop = false;
+  bool _didPrecache = false;
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_didPrecache) {
+      _didPrecache = true;
+      precacheImage(const AssetImage('assets/images/profile.jpg'), context);
+      precacheImage(const AssetImage('assets/images/hero_newspulse.jpg'), context);
+      precacheImage(const AssetImage('assets/images/project_kuh_e_clinic.jpg'), context);
+      precacheImage(const AssetImage('assets/images/project_newspulse.jpg'), context);
+    }
   }
 
   void _onScroll() {

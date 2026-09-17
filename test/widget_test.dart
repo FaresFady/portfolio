@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fares_portfolio/main.dart';
 import 'package:fares_portfolio/theme/app_theme.dart';
@@ -83,5 +84,11 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(themeNotifier.value, ThemeMode.dark);
+  });
+
+  test('CV PDF asset exists and is loadable with correct content', () async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    final data = await rootBundle.load('assets/cv/Fares_Elhabashy_CV.pdf');
+    expect(data.lengthInBytes, equals(167455));
   });
 }
