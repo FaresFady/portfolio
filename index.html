@@ -19,16 +19,181 @@
 
   <title>Fares Elhabashy — Junior Flutter Developer</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- Google Fonts Preload to prevent font flicker / layout shift -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
   <style>
     body {
       background-color: #10161D;
       margin: 0;
       padding: 0;
       overflow-x: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    /* Instant branded loading splash screen */
+    #splash-loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #10161D;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 999999;
+      transition: opacity 0.4s ease-out, visibility 0.4s;
+    }
+
+    #splash-loader.fade-out {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .splash-logo {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: #171F27;
+      border: 2px solid #E8A33D;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 24px;
+      color: #E8A33D;
+      box-shadow: 0 0 30px rgba(232, 163, 61, 0.25);
+      margin-bottom: 24px;
+      animation: pulse-glow 2s infinite ease-in-out;
+    }
+
+    .splash-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #EDEFEF;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .splash-subtitle {
+      font-size: 13px;
+      color: #93A2AC;
+      margin-bottom: 28px;
+      font-family: monospace;
+    }
+
+    .splash-progress-track {
+      width: 160px;
+      height: 3px;
+      background: rgba(237, 239, 239, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .splash-progress-bar {
+      width: 40%;
+      height: 100%;
+      background: #E8A33D;
+      border-radius: 3px;
+      position: absolute;
+      animation: progress-slide 1.4s infinite ease-in-out;
+      box-shadow: 0 0 8px rgba(232, 163, 61, 0.6);
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 20px rgba(232, 163, 61, 0.2);
+      }
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 35px rgba(232, 163, 61, 0.4);
+      }
+    }
+
+    @keyframes progress-slide {
+      0% {
+        left: -40%;
+      }
+      50% {
+        left: 40%;
+        width: 60%;
+      }
+      100% {
+        left: 100%;
+        width: 40%;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Instant splash loader -->
+  <div id="splash-loader">
+    <div class="splash-logo">FE</div>
+    <div class="splash-title">Fares Elhabashy</div>
+    <div class="splash-subtitle">Flutter Developer</div>
+    <div class="splash-progress-track">
+      <div class="splash-progress-bar"></div>
+    </div>
+  </div>
+
+  <script>
+    function removeSplash() {
+      var loader = document.getElementById('splash-loader');
+      if (loader && !loader.classList.contains('fade-out')) {
+        loader.classList.add('fade-out');
+        setTimeout(function() {
+          if (loader.parentNode) loader.parentNode.removeChild(loader);
+        }, 500);
+      }
+    }
+
+    // Listen for Flutter's first render frame event
+    window.addEventListener('flutter-first-frame', function() {
+      removeSplash();
+    });
+
+    // Fallback in case flutter-first-frame event is missed
+    setTimeout(function() {
+      removeSplash();
+    }, 4500);
+
+    // CV Download helper
+    function downloadPdfFromBase64(base64Data, filename) {
+      try {
+        var binary = atob(base64Data);
+        var len = binary.length;
+        var bytes = new Uint8Array(len);
+        for (var i = 0; i < len; i++) {
+          bytes[i] = binary.charCodeAt(i);
+        }
+        var blob = new Blob([bytes], { type: 'application/pdf' });
+        var blobUrl = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = filename || 'Fares_Elhabashy_CV.pdf';
+        var container = document.body || document.documentElement;
+        container.appendChild(a);
+        a.click();
+        setTimeout(function() {
+          try {
+            container.removeChild(a);
+            URL.revokeObjectURL(blobUrl);
+          } catch (_) {}
+        }, 5000);
+      } catch (e) {
+        console.error('Blob download failed, opening direct link:', e);
+        window.open(filename || 'Fares_Elhabashy_CV.pdf', '_blank');
+      }
+    }
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
